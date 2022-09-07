@@ -39,7 +39,7 @@ private fun Type.convertToInstructionType() = when (this) {
 }
 
 private fun Statement.isPrimaryKey() = constraints.any { it is Constraint.PrimaryKey }
-private fun Statement.isNullable() = constraints.any { it !is Constraint.NotNull }
+private fun Statement.isNullable() = !constraints.contains(Constraint.NotNull)
 
 private fun String.isLowerCase() = toCharArray().any { !it.isUpperCase() }
 private fun String.capitalize() = toCharArray().let { chars ->
