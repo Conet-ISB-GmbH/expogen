@@ -5,7 +5,7 @@
  */
 import java.util.*
 
-fun generateInstructionsForScript(script: Script): Queue<Instruction> {
+fun generateInstructionsForScript(script: Script, sqlDialect: SqlDialect): Queue<Instruction> {
     val instruction = LinkedList<Instruction>()
     script.tables.forEach { table ->
         var primaryKeyFieldName = ""
