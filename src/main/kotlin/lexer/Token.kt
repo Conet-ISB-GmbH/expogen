@@ -1,3 +1,4 @@
+package lexer
 /*
  * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
  *

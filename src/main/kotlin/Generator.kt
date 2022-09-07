@@ -1,3 +1,4 @@
+import lexer.Lexer
 import java.io.File
 
 class Generator(

@@ -1,8 +1,11 @@
+package parser
 /*
  * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
+
+import lexer.Token
 import kotlin.system.exitProcess
 
 sealed class Type {
