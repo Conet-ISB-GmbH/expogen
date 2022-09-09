@@ -11,6 +11,7 @@ sealed class Token {
     object NotNull : Token()
     object OpenBracket : Token()
     object CloseBracket : Token()
+    object Unique : Token()
 
     override fun toString(): String {
         return this::class.simpleName!!

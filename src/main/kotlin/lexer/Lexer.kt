@@ -1,14 +1,20 @@
+package lexer
+
+import Token
+
 /*
  * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
-object Lexer {
-    private val tokens = mutableListOf<Token>()
+abstract class Lexer {
+    protected val tokens = mutableListOf<Token>()
     private var currentToken = ""
     private var parsePos = 0
 
-    private fun reset() {
+    abstract fun generateDialectTokens(currentToken: String, sqlContents: String): Boolean
+
+    protected fun reset() {
         currentToken = ""
     }
 
@@ -53,9 +59,19 @@ object Lexer {
                 }
 
                 else -> {
-                    if (parsePos + 1 < sqlContents.length && (sqlContents[parsePos + 1] == ' ' || sqlContents[parsePos + 1] == '\n')) {
-                        tokens.add(Token.Identifier(currentToken))
-                        reset()
+                    if (generateDialectTokens(currentToken, sqlContents))
+                        continue
+
+                    if (
+                        parsePos + 1 < sqlContents.length &&
+                        (sqlContents[parsePos + 1] == ' ' ||
+                                sqlContents[parsePos + 1] == '\n' ||
+                                sqlContents[parsePos + 1] == ',' ||
+                                sqlContents[parsePos + 1] == '(' ||
+                                sqlContents[parsePos + 1] == ')')
+                    ) {
+                            tokens.add(Token.Identifier(currentToken))
+                            reset()
                     }
                 }
             }
@@ -65,7 +81,7 @@ object Lexer {
         return tokens
     }
 
-    private fun consumeToken(
+    protected fun consumeToken(
         sqlContents: String,
     ): Int {
         var currentToken1 = currentToken
@@ -75,7 +91,14 @@ object Lexer {
         do {
             currentToken1 += sqlContents[parsePos].lowercase()
             parsePos++
-        } while (sqlContents[parsePos] != ' ' && sqlContents[parsePos] != ',' && sqlContents[parsePos] != '\n')
+        } while (
+            sqlContents[parsePos] != ' ' &&
+            sqlContents[parsePos] != ',' &&
+            sqlContents[parsePos] != '\n' &&
+            sqlContents[parsePos] != '(' &&
+            sqlContents[parsePos] != ')'
+        )
+
         return parsePos
     }
 }
