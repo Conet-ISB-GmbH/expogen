@@ -9,6 +9,7 @@ sealed class Token {
     object TableKeyword : Token()
     object PrimaryKey : Token()
     object NotNull : Token()
+    object Default : Token()
     object OpenBracket : Token()
     object CloseBracket : Token()
     object Unique : Token()

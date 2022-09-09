@@ -38,6 +38,11 @@ abstract class Lexer {
                     reset()
                 }
 
+                "default" -> {
+                    tokens.add(Token.Default)
+                    reset()
+                }
+
                 "primary" -> {
                     parsePos = consumeToken(sqlContents)
                     tokens.add(Token.PrimaryKey)

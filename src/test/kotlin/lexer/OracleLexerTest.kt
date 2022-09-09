@@ -273,7 +273,7 @@ class OracleLexerTest {
         val testString = "DEFAULT 1,"
         val tokens = OracleLexer().generateTokens(testString)
 
-        assertEquals(Token.Identifier("default"), tokens.first())
+        assertEquals(Token.Default, tokens.first())
         assertEquals(Token.Identifier("1"), tokens[1])
         assertEquals(2, tokens.size)
     }

@@ -17,6 +17,7 @@ sealed class Type {
 sealed class Constraint {
     object NotNull : Constraint()
     object PrimaryKey : Constraint()
+    data class Default(val value: Int) : Constraint()
 }
 
 data class Statement(
@@ -67,30 +68,10 @@ abstract class Parser {
 
     abstract fun parseInnerStatement(tokens: MutableList<Token>): Statement
 
-//    private fun parseInnerStatement(): Statement {
-//        val colIdentifier = (tokens.removeFirst() as Token.Identifier)
-//        val colType = (tokens.removeFirst() as Token.Identifier)
-//        val constraints = mutableListOf<Constraint>()
-//        while (tokens.isNotEmpty() && tokens.first() !is Token.Identifier) {
-//            when (tokens.removeFirst()) {
-//                Token.NotNull -> constraints.add(Constraint.NotNull)
-//                Token.PrimaryKey -> constraints.add(Constraint.PrimaryKey)
-//                else -> {}
-//            }
-//        }
-//        val type = if (colType.value.contains("varchar")) {
-//            val parts = colType.value.removeSuffix(")").split("(")
-//            val length = parts[1].toInt()
-//            Type.Varchar(length = length)
-//        } else {
-//            Type.Number
-//        }
-//        return Statement(
-//            identifier = colIdentifier.value,
-//            type = type,
-//            constraints = constraints,
-//        )
-//    }
+    protected fun createDefaultConstraint(tokens: MutableList<Token>) : Constraint {
+        val defaultValue = (tokens.removeFirst() as Token.Identifier).value.toInt()
+        return Constraint.Default(defaultValue)
+    }
 
     protected fun MutableList<Token>.consume(number: Int = 1) {
         repeat((0 until number).count()) { removeFirst() }
