@@ -20,7 +20,11 @@ sealed class Constraint {
     data class Default(val value: Int) : Constraint()
 }
 
-data class Statement(
+sealed class TableConstraint {
+    data class Unique(val columnNames: List<String>) : TableConstraint()
+}
+
+data class ColumnStatement(
     val identifier: String,
     val type: Type,
     val constraints: List<Constraint>,
@@ -28,7 +32,8 @@ data class Statement(
 
 data class Table(
     val tableName: String,
-    val statements: List<Statement> = emptyList(),
+    val columnStatements: List<ColumnStatement> = emptyList(),
+    val tableContraints: List<TableConstraint> = emptyList(),
 )
 
 class Script {
@@ -50,13 +55,24 @@ abstract class Parser {
         val name = tokens.removeFirst()
         if (name is Token.Identifier) {
             val table = Table(tableName = name.value)
-            val statements = mutableListOf<Statement>()
+            val statements = mutableListOf<ColumnStatement>()
+            val tableConstraints = mutableListOf<TableConstraint>()
 
             // Removes open bracket from create table statement
             tokens.consume()
-            while (tokens.isNotEmpty() && tokens.first() !is Token.CloseBracket)
-                statements.add(parseInnerStatement(tokens))
-            script.tables.add(table.copy(statements = statements))
+            while (tokens.isNotEmpty() && tokens.first() !is Token.CloseBracket) {
+                if(tokens.first() is Token.Identifier)
+                    statements.add(parseColumnStatement(tokens))
+                else
+                    tableConstraints.add(parseTableConstraint(tokens))
+
+            }
+            script.tables.add(
+                table.copy(
+                    columnStatements = statements,
+                    tableContraints = tableConstraints
+                )
+            )
 
             //Removes final closing bracket of create table statement
             tokens.consume()
@@ -66,7 +82,9 @@ abstract class Parser {
         }
     }
 
-    abstract fun parseInnerStatement(tokens: MutableList<Token>): Statement
+    abstract fun parseColumnStatement(tokens: MutableList<Token>): ColumnStatement
+
+    abstract fun parseTableConstraint(tokens: MutableList<Token>): TableConstraint
 
     protected fun createDefaultConstraint(tokens: MutableList<Token>) : Constraint {
         val defaultValue = (tokens.removeFirst() as Token.Identifier).value.toInt()

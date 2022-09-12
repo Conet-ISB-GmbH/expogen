@@ -13,6 +13,9 @@ sealed class Token {
     object OpenBracket : Token()
     object CloseBracket : Token()
     object Unique : Token()
+    object ForeignKey : Token()
+    object Constraint : Token()
+    object References : Token()
 
     override fun toString(): String {
         return this::class.simpleName!!

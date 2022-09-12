@@ -6,8 +6,13 @@ class OracleLexer : Lexer() {
     override fun generateDialectTokens(currentToken: String, sqlContents: String): Boolean {
         return when (currentToken) {
             "unique" -> {
-                consumeToken(sqlContents)
                 tokens.add(Token.Unique)
+                reset()
+                true
+            }
+
+            "constraint" -> {
+                tokens.add(Token.Constraint)
                 reset()
                 true
             }

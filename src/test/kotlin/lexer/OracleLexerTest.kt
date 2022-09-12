@@ -267,7 +267,6 @@ class OracleLexerTest {
         assertEquals(Token.Identifier("date"), tokens.first())
         assertEquals(1, tokens.size)
     }
-
     @Test
     fun `default with number and comma at the end`(){
         val testString = "DEFAULT 1,"
@@ -276,5 +275,23 @@ class OracleLexerTest {
         assertEquals(Token.Default, tokens.first())
         assertEquals(Token.Identifier("1"), tokens[1])
         assertEquals(2, tokens.size)
+    }
+    @Test
+    fun `valid foreign key constraint`(){
+        val testString = "CONSTRAINT fk_other_id FOREIGN KEY (ID) REFERENCES OTHER_TABLE (ID),"
+        val tokens = OracleLexer().generateTokens(testString)
+
+        assertEquals(Token.Constraint, tokens.first())
+        assertEquals(Token.Identifier("fk_other_id"), tokens[1])
+        assertEquals(Token.ForeignKey, tokens[2])
+        assertEquals(Token.OpenBracket, tokens[3])
+        assertEquals(Token.Identifier("id"), tokens[4])
+        assertEquals(Token.CloseBracket, tokens[5])
+        assertEquals(Token.References, tokens[6])
+        assertEquals(Token.Identifier("other_table"), tokens[7])
+        assertEquals(Token.OpenBracket, tokens[8])
+        assertEquals(Token.Identifier("id"), tokens[9])
+        assertEquals(Token.CloseBracket, tokens[10])
+        assertEquals(11, tokens.size)
     }
 }

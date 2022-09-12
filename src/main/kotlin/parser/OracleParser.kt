@@ -2,14 +2,13 @@ package parser
 
 import Constraint
 import Parser
-import Statement
+import ColumnStatement
+import TableConstraint
 import Token
 import Type
-import java.lang.RuntimeException
-import java.util.TooManyListenersException
 
 class OracleParser : Parser() {
-    override fun parseInnerStatement(tokens: MutableList<Token>): Statement {
+    override fun parseColumnStatement(tokens: MutableList<Token>): ColumnStatement {
         val colIdentifier = (tokens.removeFirst() as Token.Identifier)
         val colType = (tokens.removeFirst() as Token.Identifier)
 
@@ -17,22 +16,41 @@ class OracleParser : Parser() {
             "varchar" -> createVarchar(tokens)
             "varchar2" -> createVarchar2(tokens)
             "number" -> createNumber(tokens)
-            "date" -> createDate(tokens)
+            "date" -> createDate()
             else -> throw RuntimeException("ColumnType: ${colType.value} is not supported by oracle dialect")
         }
 
-        val constraints = parseStatementContraints(tokens)
+        val constraints = parseColumnConstraints(tokens)
 
-        return Statement(
+        return ColumnStatement(
             identifier = colIdentifier.value,
             type = type,
             constraints = constraints,
         )
     }
 
-    private fun parseStatementContraints(tokens: MutableList<Token>): List<Constraint> {
+    override fun parseTableConstraint(tokens: MutableList<Token>): TableConstraint {
+        return when(val constraintIdentifier = tokens.removeFirst()) {
+            is Token.Unique -> createUniqueTableConstraint(tokens)
+            else -> throw RuntimeException("Table-Constraint: $constraintIdentifier is not supported by oracle dialect")
+        }
+    }
+
+    private fun createUniqueTableConstraint(tokens: MutableList<Token>): TableConstraint {
+        val columnNames = mutableListOf<String>()
+        // Removes OpenBracket
+        tokens.consume()
+        while(tokens.first() is Token.Identifier) {
+            columnNames.add((tokens.removeFirst() as Token.Identifier).value)
+        }
+        // Removes CloseBracket
+        tokens.consume()
+        return TableConstraint.Unique(columnNames = columnNames)
+    }
+
+    private fun parseColumnConstraints(tokens: MutableList<Token>): List<Constraint> {
         val constraints = mutableListOf<Constraint>()
-        while (tokens.isNotEmpty() && tokens.first() !is Token.Identifier && tokens.first() !is Token.CloseBracket) {
+        while (tokens.isNotEmpty() && isColumnConstraintNext(tokens)) {
             when (tokens.removeFirst()) {
                 Token.NotNull -> constraints.add(Constraint.NotNull)
                 Token.PrimaryKey -> constraints.add(Constraint.PrimaryKey)
@@ -68,5 +86,11 @@ class OracleParser : Parser() {
         return Type.Varchar2(length)
     }
 
-    private fun createDate(tokens: MutableList<Token>): Type = Type.Date
+    private fun createDate(): Type = Type.Date
+
+    private fun isColumnConstraintNext(tokens: MutableList<Token>) =
+        tokens.first() !is Token.Identifier && tokens.first() !is Token.CloseBracket && !isTableConstraintNext(tokens)
+
+    private fun isTableConstraintNext(tokens: MutableList<Token>) =
+        tokens.first() is Token.Unique
 }

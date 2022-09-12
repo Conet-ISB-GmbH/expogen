@@ -49,6 +49,17 @@ abstract class Lexer {
                     reset()
                 }
 
+                "foreign" -> {
+                    parsePos = consumeToken(sqlContents)
+                    tokens.add(Token.ForeignKey)
+                    reset()
+                }
+
+                "references" -> {
+                    tokens.add(Token.References)
+                    reset()
+                }
+
                 "(" -> {
                     tokens.add(Token.OpenBracket)
                     reset()
@@ -64,9 +75,10 @@ abstract class Lexer {
                 }
 
                 else -> {
-                    if (generateDialectTokens(currentToken, sqlContents))
+                    if (generateDialectTokens(currentToken, sqlContents)) {
+                        parsePos++
                         continue
-
+                    }
                     if (
                         parsePos + 1 < sqlContents.length &&
                         (sqlContents[parsePos + 1] == ' ' ||
