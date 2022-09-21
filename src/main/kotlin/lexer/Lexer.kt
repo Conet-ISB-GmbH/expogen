@@ -71,7 +71,7 @@ abstract class Lexer {
                     reset()
                 }
 
-                " ", "\n", ",", ";" -> {
+                " ", "\n", ",", ";","'" -> {
                     reset()
                 }
 

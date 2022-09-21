@@ -63,4 +63,4 @@ private fun Type.convertToInstructionType() =
 
 private fun ColumnStatement.isPrimaryKey() = constraints.any { it is Constraint.PrimaryKey }
 private fun ColumnStatement.isNullable() = !constraints.contains(Constraint.NotNull)
-private fun ColumnStatement.getDefaultValue() = constraints.filterIsInstance<Constraint.Default>().firstOrNull()?.value
+private fun ColumnStatement.getDefaultValue() = (constraints.firstOrNull {it is Constraint.Default} as Constraint.Default?)?.value
