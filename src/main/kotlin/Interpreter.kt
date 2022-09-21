@@ -15,7 +15,7 @@ class Interpreter(
             when (val instruction = instructionSet.poll()) {
                 is Instruction.Obj -> {
                     code.append("object ")
-                        .append(instruction.objectName.fixCasing())
+                        .append(instruction.objectName.fixCasing().let { it.first().titlecaseChar() + it.slice(1 until it.length) })
                         .append(" : Table(name = \"${instruction.realName.uppercase()}\") {\n")
                 }
 
