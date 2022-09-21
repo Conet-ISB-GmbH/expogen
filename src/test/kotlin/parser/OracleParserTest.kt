@@ -85,7 +85,7 @@ class OracleParserTest {
         assertEquals("is_valid", script.tables[0].columnStatements[3].identifier)
         assertEquals(Type.NumberWithPrecision(1, 0), script.tables[0].columnStatements[3].type)
         assertEquals(1, script.tables[0].columnStatements[3].constraints.size)
-        assertEquals(Constraint.Default(1), script.tables[0].columnStatements[3].constraints[0])
+        assertEquals(Constraint.Default("1"), script.tables[0].columnStatements[3].constraints[0])
 
         assertEquals("admission_date", script.tables[0].columnStatements[4].identifier)
         assertEquals(Type.Date, script.tables[0].columnStatements[4].type)
