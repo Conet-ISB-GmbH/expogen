@@ -1,3 +1,4 @@
+package lexer
 
 /*
  * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
@@ -5,7 +6,8 @@
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
-fun <T> Array<T>.second(): T {
-    require(size >= 2)
-    return get(1)
+class PostgresLexer : Lexer() {
+    override fun generateDialectTokens(currentToken: String, sqlContents: String): Boolean {
+        TODO("Not yet implemented")
+    }
 }
