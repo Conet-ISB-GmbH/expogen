@@ -3,6 +3,12 @@ package lexer
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
+/*
+ * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
+ * Copyright (c) 2022, Christoph Helbing <manig.christoph@googlemail.com>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
 class OracleLexerTest {
 
     @Test

@@ -1,6 +1,12 @@
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/*
+ * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
+ * Copyright (c) 2022, Christoph Helbing <manig.christoph@googlemail.com>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
 class PreProcessorTest {
     @Test
     fun `pass plain sql into the pre processor and nothing should change`() {
