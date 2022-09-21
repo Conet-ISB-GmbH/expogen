@@ -20,7 +20,7 @@ sealed class Type {
 sealed class Constraint {
     object NotNull : Constraint()
     object PrimaryKey : Constraint()
-    data class Default(val value: Int) : Constraint()
+    data class Default(val value: String) : Constraint()
 }
 
 sealed class TableConstraint {
@@ -97,7 +97,7 @@ abstract class Parser {
     abstract fun parseTableConstraint(tokens: MutableList<Token>): TableConstraint
 
     protected fun createDefaultConstraint(tokens: MutableList<Token>): Constraint {
-        val defaultValue = (tokens.removeFirst() as Token.Identifier).value.toInt()
+        val defaultValue = (tokens.removeFirst() as Token.Identifier).value
         return Constraint.Default(defaultValue)
     }
 
