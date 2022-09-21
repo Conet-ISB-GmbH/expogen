@@ -1,11 +1,14 @@
+package parser
+
+import Token
+import kotlin.system.exitProcess
+
 /*
  * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
+ * Copyright (c) 2022, Christoph Helbing <manig.christoph@googlemail.com>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
-
-import kotlin.system.exitProcess
-
 sealed class Type {
     object Number : Type()
     data class NumberWithPrecision(val precision: Int, val scale: Int) : Type()
@@ -27,7 +30,7 @@ sealed class TableConstraint {
         val name: String,
         val columnName: String,
         val foreignTableName: String,
-        val foreignKeyColumn: String
+        val foreignKeyColumn: String,
     ) : TableConstraint()
 }
 

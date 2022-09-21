@@ -1,23 +1,27 @@
 package parser
 
-import Constraint
-import TableConstraint
 import lexer.OracleLexer
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+/*
+ * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
+ * Copyright (c) 2022, Christoph Helbing <manig.christoph@googlemail.com>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
 class OracleParserTest {
     @Test
     fun `generate create table instruction`() {
         val sqlString = "CREATE TABLE Test (\n);"
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(0, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(0, script.tables[0].columnStatements.size)
     }
 
     @Test
@@ -29,17 +33,17 @@ class OracleParserTest {
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(1, instructions.tables[0].columnStatements.size)
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(1, script.tables[0].columnStatements.size)
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
     }
 
@@ -56,37 +60,37 @@ class OracleParserTest {
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(5, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(5, script.tables[0].columnStatements.size)
 
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
-        assertEquals("kind", instructions.tables[0].columnStatements[1].identifier)
-        assertEquals(Type.Varchar2(32), instructions.tables[0].columnStatements[1].type)
-        assertEquals(1, instructions.tables[0].columnStatements[1].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[1].constraints[0])
+        assertEquals("kind", script.tables[0].columnStatements[1].identifier)
+        assertEquals(Type.Varchar2(32), script.tables[0].columnStatements[1].type)
+        assertEquals(1, script.tables[0].columnStatements[1].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[1].constraints[0])
 
-        assertEquals("year", instructions.tables[0].columnStatements[2].identifier)
-        assertEquals(Type.Number, instructions.tables[0].columnStatements[2].type)
-        assertEquals(0, instructions.tables[0].columnStatements[2].constraints.size)
+        assertEquals("year", script.tables[0].columnStatements[2].identifier)
+        assertEquals(Type.Number, script.tables[0].columnStatements[2].type)
+        assertEquals(0, script.tables[0].columnStatements[2].constraints.size)
 
-        assertEquals("is_valid", instructions.tables[0].columnStatements[3].identifier)
-        assertEquals(Type.NumberWithPrecision(1, 0), instructions.tables[0].columnStatements[3].type)
-        assertEquals(1, instructions.tables[0].columnStatements[3].constraints.size)
-        assertEquals(Constraint.Default(1), instructions.tables[0].columnStatements[3].constraints[0])
+        assertEquals("is_valid", script.tables[0].columnStatements[3].identifier)
+        assertEquals(Type.NumberWithPrecision(1, 0), script.tables[0].columnStatements[3].type)
+        assertEquals(1, script.tables[0].columnStatements[3].constraints.size)
+        assertEquals(Constraint.Default(1), script.tables[0].columnStatements[3].constraints[0])
 
-        assertEquals("admission_date", instructions.tables[0].columnStatements[4].identifier)
-        assertEquals(Type.Date, instructions.tables[0].columnStatements[4].type)
-        assertEquals(1, instructions.tables[0].columnStatements[4].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[4].constraints[0])
+        assertEquals("admission_date", script.tables[0].columnStatements[4].identifier)
+        assertEquals(Type.Date, script.tables[0].columnStatements[4].type)
+        assertEquals(1, script.tables[0].columnStatements[4].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[4].constraints[0])
     }
 
     @Test
@@ -99,24 +103,24 @@ class OracleParserTest {
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(1, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(1, script.tables[0].columnStatements.size)
 
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
-        assertEquals(1, instructions.tables[0].tableContraints.size)
-        assertEquals(3, (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
-        assertEquals("office_number", (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
-        assertEquals("kind", (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[1])
-        assertEquals("year", (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[2])
+        assertEquals(1, script.tables[0].tableContraints.size)
+        assertEquals(3, (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
+        assertEquals("office_number", (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
+        assertEquals("kind", (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[1])
+        assertEquals("year", (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[2])
     }
 
     @Test
@@ -129,22 +133,22 @@ class OracleParserTest {
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(1, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(1, script.tables[0].columnStatements.size)
 
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
-        assertEquals(1, instructions.tables[0].tableContraints.size)
-        assertEquals(1, (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
-        assertEquals("kind", (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
+        assertEquals(1, script.tables[0].tableContraints.size)
+        assertEquals(1, (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
+        assertEquals("kind", (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
     }
 
     @Test
@@ -158,31 +162,32 @@ class OracleParserTest {
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(2, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(2, script.tables[0].columnStatements.size)
 
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
-        assertEquals("this_id", instructions.tables[0].columnStatements[1].identifier)
-        assertEquals(Type.Number, instructions.tables[0].columnStatements[1].type)
-        assertEquals(1, instructions.tables[0].columnStatements[1].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[1].constraints[0])
+        assertEquals("this_id", script.tables[0].columnStatements[1].identifier)
+        assertEquals(Type.Number, script.tables[0].columnStatements[1].type)
+        assertEquals(1, script.tables[0].columnStatements[1].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[1].constraints[0])
 
-        assertEquals(1, instructions.tables[0].tableContraints.size)
-        assertEquals(TableConstraint.ForeignKey(
+        assertEquals(1, script.tables[0].tableContraints.size)
+        assertEquals(
+            TableConstraint.ForeignKey(
             name = "fk_other_id",
             columnName = "this_id",
             foreignTableName = "other_table",
             foreignKeyColumn = "other_id"
-        ), instructions.tables[0].tableContraints[0])
+        ), script.tables[0].tableContraints[0])
     }
 
     @Test
@@ -192,38 +197,39 @@ class OracleParserTest {
             (
                 ID              VARCHAR(128)      NOT NULL PRIMARY KEY,
                 THIS_ID         NUMBER            NOT NULL,
-                UNIQUE (THIS_ID)                
-                CONSTRAINT fk_other_id FOREIGN KEY (THIS_ID) REFERENCES OTHER_TABLE (OTHER_ID),                
+                UNIQUE (THIS_ID),                
+                CONSTRAINT fk_other_id FOREIGN KEY (THIS_ID) REFERENCES OTHER_TABLE (OTHER_ID)                
             );
         """.trimIndent()
         val tokens = OracleLexer().generateTokens(sqlString)
-        val instructions = OracleParser().parse(tokens)
+        val script = OracleParser().parse(tokens)
 
-        assertNotNull(instructions)
-        assertEquals(1, instructions.tables.size)
-        assertEquals("test", instructions.tables[0].tableName)
-        assertEquals(2, instructions.tables[0].columnStatements.size)
+        assertNotNull(script)
+        assertEquals(1, script.tables.size)
+        assertEquals("test", script.tables[0].tableName)
+        assertEquals(2, script.tables[0].columnStatements.size)
 
-        assertEquals("id", instructions.tables[0].columnStatements[0].identifier)
-        assertEquals(Type.Varchar(128), instructions.tables[0].columnStatements[0].type)
-        assertEquals(2, instructions.tables[0].columnStatements[0].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[0].constraints[0])
-        assertEquals(Constraint.PrimaryKey, instructions.tables[0].columnStatements[0].constraints[1])
+        assertEquals("id", script.tables[0].columnStatements[0].identifier)
+        assertEquals(Type.Varchar(128), script.tables[0].columnStatements[0].type)
+        assertEquals(2, script.tables[0].columnStatements[0].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[0].constraints[0])
+        assertEquals(Constraint.PrimaryKey, script.tables[0].columnStatements[0].constraints[1])
 
-        assertEquals("this_id", instructions.tables[0].columnStatements[1].identifier)
-        assertEquals(Type.Number, instructions.tables[0].columnStatements[1].type)
-        assertEquals(1, instructions.tables[0].columnStatements[1].constraints.size)
-        assertEquals(Constraint.NotNull, instructions.tables[0].columnStatements[1].constraints[0])
+        assertEquals("this_id", script.tables[0].columnStatements[1].identifier)
+        assertEquals(Type.Number, script.tables[0].columnStatements[1].type)
+        assertEquals(1, script.tables[0].columnStatements[1].constraints.size)
+        assertEquals(Constraint.NotNull, script.tables[0].columnStatements[1].constraints[0])
 
-        assertEquals(2, instructions.tables[0].tableContraints.size)
-        assertEquals(1, (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
-        assertEquals("this_id", (instructions.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
+        assertEquals(2, script.tables[0].tableContraints.size)
+        assertEquals(1, (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames.size)
+        assertEquals("this_id", (script.tables[0].tableContraints[0] as TableConstraint.Unique).columnNames[0])
 
-        assertEquals(TableConstraint.ForeignKey(
+        assertEquals(
+            TableConstraint.ForeignKey(
             name = "fk_other_id",
             columnName = "this_id",
             foreignTableName = "other_table",
             foreignKeyColumn = "other_id"
-        ), instructions.tables[0].tableContraints[1])
+        ), script.tables[0].tableContraints[1])
     }
 }

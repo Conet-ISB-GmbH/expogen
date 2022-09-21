@@ -1,12 +1,13 @@
 package parser
 
-import Constraint
-import Parser
-import ColumnStatement
-import TableConstraint
 import Token
-import Type
 
+/*
+ * Copyright (c) 2022, Patrick Wilmes <patrick.wilmes@bit-lake.com>
+ * Copyright (c) 2022, Christoph Helbing <manig.christoph@googlemail.com>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
 class OracleParser : Parser() {
     override fun parseColumnStatement(tokens: MutableList<Token>): ColumnStatement {
         val colIdentifier = (tokens.removeFirst() as Token.Identifier)
@@ -33,7 +34,7 @@ class OracleParser : Parser() {
         return when(val constraintIdentifier = tokens.removeFirst()) {
             is Token.Unique -> createUniqueTableConstraint(tokens)
             is Token.Constraint -> createTableConstraint(tokens)
-            else -> throw RuntimeException("Table-Constraint: $constraintIdentifier is not supported by oracle dialect")
+            else -> throw RuntimeException("parser.Table-parser.Constraint: $constraintIdentifier is not supported by oracle dialect")
         }
     }
 
